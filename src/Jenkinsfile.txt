@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         NODE_ENV = 'production' // Example environment variable
-        API_KEY = credentials('api-key-id') // Secure credentials from Jenkins
+        API_KEY = credentials('11cc90f8abc4d7b8ff139e1d8419e8aa69') // Secure credentials from Jenkins
     }
 
     stages {
