@@ -1,9 +1,9 @@
 pipeline {
-    agent any  // Runs on any available Jenkins agent/node
+    agent any // Runs on any available Jenkins agent/node
 
     environment {
         NODE_ENV = 'production' // Example environment variable
-        API_KEY = credentials('api-key-id') // Example credentials from Jenkins
+        API_KEY = credentials('api-key-id') // Secure credentials from Jenkins
     }
 
     stages {
@@ -19,7 +19,12 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing dependencies...'
-                sh 'npm install' // Replace with your dependency manager (e.g., npm, yarn, pip, mvn, etc.)
+                script {
+                    // Ensure Node.js environment
+                    sh 'node -v' || error('Node.js is not installed on this agent.')
+                    sh 'npm -v' || error('npm is not installed on this agent.')
+                }
+                sh 'npm install' // Install project dependencies
             }
         }
 
@@ -27,7 +32,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the project...'
-                sh 'npm run build' // Replace with your build command
+                sh 'npm run build' // Run your build command
             }
         }
 
@@ -35,7 +40,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 echo 'Running tests...'
-                sh 'npm test' // Replace with your testing command
+                sh 'npm test' // Run your testing command
             }
         }
 
@@ -49,7 +54,7 @@ pipeline {
     }
 
     post {
-        // Actions to perform after the pipeline (success, failure, or always)
+        // Actions to perform after the pipeline execution
         success {
             echo 'Pipeline completed successfully!'
         }
@@ -58,7 +63,7 @@ pipeline {
         }
         always {
             echo 'Cleaning up workspace...'
-            cleanWs() // Cleans the Jenkins workspace
+            cleanWs() // Clean the Jenkins workspace
         }
     }
 }
